@@ -138,8 +138,40 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script>
-        'use strict'
-        
+        "use strict";
+        //функция-конструктор для создания тасков
+        function Task(taskTitle, taskText, taskPriority) {
+            this.title = taskTitle;
+            this.text = taskText;
+            this.priority = taskPriority;
+            this.isDone = false;
+        }
+        // массивы для тасков
+        let completedTasks = [];
+        let plannedTasks = [];
+
+        function checkPriority {
+            let radioButtons = document.getElementsByName("gridRadios");
+            for(let i = 0; i < radioButtons.length; i++) {
+                if (radioButtons[i].checked == true)
+                    return radioButtons[i].value;
+            }
+        }
+
+        // событие нажать кнопку Add task
+        function addTask() {
+            let task = new Task(inputTitle.value, inputText.value, checkPriority());
+            plannedTasks.push(task);
+        }
+
+        function showTask() {
+            let currentTasksList = document.getElementById('currentTasks');
+            for (let i = 0; i < plannedTasks.length; i++) {
+                let li = document.createElement('li');
+                let currentTasksListItem = li.
+            }            
+
+        }
     </script>
 </body>
 </html>

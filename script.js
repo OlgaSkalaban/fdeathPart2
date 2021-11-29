@@ -4,6 +4,7 @@ function Task(taskTitle, taskText, taskPriority) {
     this.title = taskTitle;
     this.text = taskText;
     this.priority = taskPriority;
+    this.isDone = false;
 }
 // массивы для тасков
 let completedTasks = [];
@@ -17,11 +18,13 @@ function checkPriority {
 }
 
 // событие нажать кнопку Add task
+function addTask() {
+    let task = new Task(inputTitle.value, inputText.value, checkPriority());
+    plannedTasks.push(task);
+}
 
-let task = new Task(inputTitle.value, inputText.value, checkPriority());
+function showTask() {
+    let currentTasksList = document.getElementById('currentTasks');
 
-plannedTasks.push(task);
-
-
-
+}
 
