@@ -145,19 +145,24 @@
             this.text = taskText,
             this.priority = taskPriority,
             this.isDone = false,
-            this.createDate = new Date().toLocaleString().slice(0,-3)
+            this.creationDate = ''
         }
         
         function checkPriority() {
             let radioButtons = document.getElementsByName("gridRadios");
             for(let i = 0; i < radioButtons.length; i++) {
-                if (radioButtons[i].checked == true)
+                if (radioButtons[i].checked == true)                    
                     return radioButtons[i].value;
             }
         }
         
         function addTask() {
             let task = new Task(inputTitle.value, inputText.value, checkPriority());
+
+            let time = new Date().toLocaleTimeString().slice(0,-3);
+            let date = new Date().toLocaleDateString('ru-RU');
+            task.creationDate = time + " " + date;
+            
             toDoTasks.push(task);
         }
 
@@ -168,13 +173,13 @@
             <li class="list-group-item d-flex w-100 mb-2">
                 <div class="w-100 mr-2">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">"${elem.title}"</h5>
+                        <h5 class="mb-1">${elem.title}</h5>
                         <div>
-                            <small class="mr-2">"${elem.priority}"</small>
-                            <small>"${elem.createDate}</small>
+                            <small class="mr-2">${elem.priority + ' priority'}</small>
+                            <small>${elem.creationDate}</small>
                         </div>
                     </div>
-                    <p class="mb-1 w-100">"${elem.text}"</p>
+                    <p class="mb-1 w-100">${elem.text}</p>
                 </div>
                 <div class="dropdown m-2 dropleft">
                     <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -191,11 +196,13 @@
         
         let toDoTasks = [];
         
-        document.querySelector('button[type="submit"]').addEventListener('click', function() {
+        let form = document.querySelector('form');
+
+        form.onsubmit = function(event) {
+            event.preventDefault();
             addTask();
-            showTask();
-            alert(toDoTasks.length);
-        });
+            showTask();            
+        }
 
     </script>
 </body>
