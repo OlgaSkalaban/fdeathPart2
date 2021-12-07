@@ -169,9 +169,9 @@
         }
 
         function deleteElement(num) {
-            let deletedItemIndex = toDoTasks.findIndex( (item) => item.id === num);
+            let deletedItemIndex = toDoTasks.findIndex( (item) => item.id == num);
             toDoTasks.splice(deletedItemIndex, 1);
-            
+            showCurrentTask();           
         }
 
         function showCurrentTask() {
@@ -201,23 +201,71 @@
                 </div>
             </li>`).join('');
         }
+
+        function showCompletedTasks() {
+            let currentTasksList = document.getElementById('completedTasks');
+            currentTasksList.innerHTML = '';
+            currentTasksList.innerHTML = toDoTasks.filter(task => task.isDone === true).map(elem => `
+            <li class="list-group-item d-flex w-100 mb-2" data-id="${elem.id}">
+                <div class="w-100 mr-2">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">${elem.title}</h5>
+                        <div>
+                            <small class="mr-2">${elem.priority + ' priority'}</small>
+                            <small>${elem.creationDate}</small>
+                        </div>
+                    </div>
+                    <p class="mb-1 w-100">${elem.text}</p>
+                </div>
+                <div class="dropdown m-2 dropleft">
+                    <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
+                        <button type="button" class="btn btn-info w-100 my-2">Edit</button>
+                    </div>
+                </div>
+            </li>`).join('');
+        }
+        
+        function doneTask(num) {
+            let completedItemIndex = toDoTasks.findIndex( (item) => item.id == num);
+            if (toDoTasks[completedItemIndex].isDone == false) {
+                toDoTasks[completedItemIndex].isDone = true;
+            }
+            showCurrentTask();
+            showCompletedTasks();
+        }
         
         let toDoTasks = [];
-        //создание задачи
-        let form = document.querySelector('form');
         
+        //создание задачи
+        let form = document.querySelector('form');         
         form.onsubmit = function(event) {
             event.preventDefault();
             addTask();
             showCurrentTask();            
         }
-        //удаление задачи из списка
-        let deleteBtn = document.querySelector('.btn btn-danger w-100');
-        deleteBtn.addEventListener('click', function(e) {
-            let deletedID = e.target.getAttribute('data-id');
-            deleteElement(deletedID);
-        }
 
+        
+        let tasksList = document.getElementById("currentTasks");        
+        tasksList.addEventListener('click', function(event) {
+            /*if (event.target.className != "btn btn-danger w-100")
+                return;
+            else {
+                let deletedItem = event.target.closest('li');
+                let deletedID = deletedItem.getAttribute('data-id');
+                deleteElement(deletedID);
+            }*/
+
+            if (event.target.className != "btn btn-success w-100")
+                return;
+            else {
+                let completedItem = event.target.closest('li');
+                let completedID = completedItem.getAttribute('data-id');
+                doneTask(completedID);
+            }
+        });
 
     </script>
 </body>
