@@ -222,7 +222,7 @@
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
-                        <button type="button" class="btn btn-info w-100 my-2">Edit</button>
+                        <button type="button" class="btn btn-danger w-100">Delete</button>
                     </div>
                 </div>
             </li>`).join('');
@@ -237,6 +237,25 @@
             showCompletedTasks();
         }
         
+        function editElement(num) {
+            let editItemIndex = toDoTasks.findIndex( (item) => item.id == num ); 
+
+            //вывод полученных данных в поля формы
+            document.getElementById('inputTitle').value = toDoTasks[editItemIndex].title;
+            document.getElementById('inputText').value = toDoTasks[editItemIndex].text;
+            if (toDoTasks[editItemIndex].priority === "Low") {
+                document.getElementById('Low').checked = true;
+            }
+            if (toDoTasks[editItemIndex].priority === "Medium") {
+                document.getElementById('Medium').checked = true;
+            }
+            if (toDoTasks[editItemIndex].priority === "High") {
+                document.getElementById('High').checked = true;
+            }
+            $('#exampleModal').modal('show');
+            
+        }
+        
         let toDoTasks = [];
         
         //создание задачи
@@ -244,20 +263,34 @@
         form.onsubmit = function(event) {
             event.preventDefault();
             addTask();
+            event.target.reset();
             showCurrentTask();            
         }
 
-        
-        let tasksList = document.getElementById("currentTasks");        
+        let tasksList = document.getElementById("currentTasks");
+        //редактирование задачи
         tasksList.addEventListener('click', function(event) {
-            /*if (event.target.className != "btn btn-danger w-100")
+            if (event.target.className != "btn btn-info w-100 my-2")
+                return;
+            else {
+                let editItemID = event.target.closest('li').getAttribute('data-id');
+                editElement(editItemID);
+            }
+        });
+
+        //удаление элементов                
+        tasksList.addEventListener('click', function(event) {
+            if (event.target.className != "btn btn-danger w-100")
                 return;
             else {
                 let deletedItem = event.target.closest('li');
                 let deletedID = deletedItem.getAttribute('data-id');
                 deleteElement(deletedID);
-            }*/
+            }
+        });
 
+        //отметка о выполнении задания       
+        tasksList.addEventListener('click', function(event) {
             if (event.target.className != "btn btn-success w-100")
                 return;
             else {
@@ -265,7 +298,11 @@
                 let completedID = completedItem.getAttribute('data-id');
                 doneTask(completedID);
             }
-        });
+        });  
+
+        //сортировка по дате
+
+
 
     </script>
 </body>
