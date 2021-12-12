@@ -168,6 +168,10 @@
             task.id = toDoTasks.length;
         }
 
+        function updateTask(num) {
+            
+        }
+
         function deleteElement(num) {
             let deletedItemIndex = toDoTasks.findIndex( (item) => item.id == num);
             toDoTasks.splice(deletedItemIndex, 1);
@@ -254,27 +258,41 @@
             }
             $('#exampleModal').modal('show');
             
+                                   
         }
         
         let toDoTasks = [];
         
         //создание задачи
         let form = document.querySelector('form');         
-        form.onsubmit = function(event) {
+        form.addEventListener('submit', function(event) {
             event.preventDefault();
             addTask();
             event.target.reset();
+            $('#exampleModal').modal('hide');
             showCurrentTask();            
-        }
+        });
 
         let tasksList = document.getElementById("currentTasks");
+
+        //отметка о выполнении задания       
+        tasksList.addEventListener('click', function(event) {
+            if (event.target.className != "btn btn-success w-100")
+                return;
+            else {
+                let completedItem = event.target.closest('li');
+                let completedID = completedItem.getAttribute('data-id');
+                doneTask(completedID);
+            }
+        });  
+        
         //редактирование задачи
         tasksList.addEventListener('click', function(event) {
             if (event.target.className != "btn btn-info w-100 my-2")
                 return;
             else {
                 let editItemID = event.target.closest('li').getAttribute('data-id');
-                editElement(editItemID);
+                editElement(editItemID);                
             }
         });
 
@@ -288,22 +306,6 @@
                 deleteElement(deletedID);
             }
         });
-
-        //отметка о выполнении задания       
-        tasksList.addEventListener('click', function(event) {
-            if (event.target.className != "btn btn-success w-100")
-                return;
-            else {
-                let completedItem = event.target.closest('li');
-                let completedID = completedItem.getAttribute('data-id');
-                doneTask(completedID);
-            }
-        });  
-
-        //сортировка по дате
-
-
-
     </script>
 </body>
 </html>
