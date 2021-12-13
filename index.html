@@ -148,6 +148,7 @@
             this.isDone = false,
             this.creationDate = ''
         }
+
         
         function checkPriority() {
             let radioButtons = document.getElementsByName("gridRadios");
@@ -156,26 +157,46 @@
                     return radioButtons[i].value;
             }
         }
+
+        function createDateTime() {
+            let time = new Date().toLocaleTimeString().slice(0,-3);
+            let date = new Date().toLocaleDateString('ru-RU');            
+            return time + " " + date;
+        }
         
         function addTask() {
-            let task = new Task(inputTitle.value, inputText.value, checkPriority());
-
-            let time = new Date().toLocaleTimeString().slice(0,-3);
-            let date = new Date().toLocaleDateString('ru-RU');
-            task.creationDate = time + " " + date;
-            
+            let task = new Task(inputTitle.value, inputText.value, checkPriority());       
             toDoTasks.push(task);
+            task.creationDate = createDateTime();  
             task.id = toDoTasks.length;
-        }
-
-        function updateTask(num) {
-            
         }
 
         function deleteElement(num) {
             let deletedItemIndex = toDoTasks.findIndex( (item) => item.id == num);
             toDoTasks.splice(deletedItemIndex, 1);
             showCurrentTask();           
+        }
+
+        function editTask(num) {
+            //вывод данных выбранного элемента на форму
+            let editItemIndex = toDoTasks.findIndex( (item) => item.id == num);
+            document.getElementById('inputTitle').value = toDoTasks[editItemIndex].title;
+            document.getElementById('inputText').value = toDoTasks[editItemIndex].text;
+            document.getElementById(toDoTasks[editItemIndex].priority).checked = true;
+
+            $('#exampleModal').modal('show');           
+
+            //обновление данных задачи
+            inputText.addEventListener('change', function(event) {
+                toDoTasks[editItemIndex].text = this.value;
+            });
+            inputTitle.addEventListener('change', function(event) {
+                toDoTasks[editItemIndex].title = this.value;
+            });
+            document.getElementsByName("gridRadios").addEventListener('change', function(event) {
+                toDoTasks[editItemIndex].priority = this.value;
+            });            
+            toDoTasks[editItemIndex].creationDate = createDateTime();          
         }
 
         function showCurrentTask() {
@@ -241,30 +262,12 @@
             showCompletedTasks();
         }
         
-        function editElement(num) {
-            let editItemIndex = toDoTasks.findIndex( (item) => item.id == num ); 
-
-            //вывод полученных данных в поля формы
-            document.getElementById('inputTitle').value = toDoTasks[editItemIndex].title;
-            document.getElementById('inputText').value = toDoTasks[editItemIndex].text;
-            if (toDoTasks[editItemIndex].priority === "Low") {
-                document.getElementById('Low').checked = true;
-            }
-            if (toDoTasks[editItemIndex].priority === "Medium") {
-                document.getElementById('Medium').checked = true;
-            }
-            if (toDoTasks[editItemIndex].priority === "High") {
-                document.getElementById('High').checked = true;
-            }
-            $('#exampleModal').modal('show');
-            
-                                   
-        }
+        
         
         let toDoTasks = [];
         
         //создание задачи
-        let form = document.querySelector('form');         
+        let form = document.querySelector('form');       
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             addTask();
@@ -292,10 +295,10 @@
                 return;
             else {
                 let editItemID = event.target.closest('li').getAttribute('data-id');
-                editElement(editItemID);                
+                editTask(editItemID);
             }
         });
-
+        
         //удаление элементов                
         tasksList.addEventListener('click', function(event) {
             if (event.target.className != "btn btn-danger w-100")
