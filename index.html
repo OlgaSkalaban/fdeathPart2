@@ -262,7 +262,9 @@
             }
             else {
                 editTask();
-                editAttribute = false;                
+                editAttribute = false;
+                exampleModalLabel.textContent = "Add task"; 
+                document.querySelector('button[type="submit"]').textContent = "Add task";             
             }
             event.target.reset();
             $('#exampleModal').modal('hide');
@@ -285,9 +287,11 @@
                 editAttribute = true;
                 editItemID = parseInt(event.target.closest('li').getAttribute('data-id'));                
                 let editTask = toDoTasks.find(item => item.id === editItemID);
-                document.getElementById('inputTitle').value = editTask.title;
-                document.getElementById('inputText').value = editTask.text;
+                inputTitle.value = editTask.title;
+                inputText.value = editTask.text;
                 document.getElementById(editTask.priority).checked = true;
+                exampleModalLabel.textContent = "Edit task";
+                document.querySelector('button[type="submit"]').textContent = "Edit task";
                 $('#exampleModal').modal('show');
             }
             //удаление элементов
