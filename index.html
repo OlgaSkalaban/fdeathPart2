@@ -148,59 +148,43 @@
             this.isDone = false,
             this.creationDate = ''
         }
-
         
         function checkPriority() {
-            let radioButtons = document.getElementsByName("gridRadios");
-            for(let i = 0; i < radioButtons.length; i++) {
-                if (radioButtons[i].checked == true)                    
-                    return radioButtons[i].value;
-            }
+            let radioButtons = Array.from(document.getElementsByName("gridRadios"));
+            return radioButtons.find(el => el.checked === true).value;
         }
 
         function createDateTime() {
-            let time = new Date().toLocaleTimeString().slice(0,-3);
+            let timestamp = new Date().getTime();
+            return timestamp;
+            /* let time = new Date().toLocaleTimeString().slice(0,-3);
             let date = new Date().toLocaleDateString('ru-RU');            
-            return time + " " + date;
+            return time + " " + date; */
         }
         
         function addTask() {
             let task = new Task(inputTitle.value, inputText.value, checkPriority());       
             toDoTasks.push(task);
             task.creationDate = createDateTime();  
-            task.id = toDoTasks.length;
+            task.id = createDateTime();
         }
 
-        function deleteElement(num) {
-            let deletedItemIndex = toDoTasks.findIndex( (item) => item.id == num);
-            toDoTasks.splice(deletedItemIndex, 1);
-            showCurrentTask();           
+        function deleteElement(taskID) {
+            toDoTasks = toDoTasks.filter(el => el.id !== taskID);
+            showCurrentTask();
+            showCompletedTasks();          
         }
 
-        function editTask(num) {
-            //вывод данных выбранного элемента на форму
-            let editItemIndex = toDoTasks.findIndex( (item) => item.id == num);
-            document.getElementById('inputTitle').value = toDoTasks[editItemIndex].title;
-            document.getElementById('inputText').value = toDoTasks[editItemIndex].text;
-            document.getElementById(toDoTasks[editItemIndex].priority).checked = true;
-
-            $('#exampleModal').modal('show');           
-
-            //обновление данных задачи
-            inputText.addEventListener('change', function(event) {
-                toDoTasks[editItemIndex].text = this.value;
-            });
-            inputTitle.addEventListener('change', function(event) {
-                toDoTasks[editItemIndex].title = this.value;
-            });
-            document.getElementsByName("gridRadios").addEventListener('change', function(event) {
-                toDoTasks[editItemIndex].priority = this.value;
-            });            
-            toDoTasks[editItemIndex].creationDate = createDateTime();          
+        function editTask() {
+            let editItem = toDoTasks.find(el => el.id === editItemID);
+            editItem.title = inputTitle.value;
+            editItem.text = inputText.value;
+            editItem.priority = checkPriority();                                    
         }
 
         function showCurrentTask() {
             let currentTasksList = document.getElementById('currentTasks');
+            let currentTasksListName = currentTasksList.previousElementSibling;
             currentTasksList.innerHTML = '';
             currentTasksList.innerHTML = toDoTasks.filter(task => task.isDone === false).map(elem => `
             <li class="list-group-item d-flex w-100 mb-2" data-id="${elem.id}">
@@ -225,12 +209,15 @@
                     </div>
                 </div>
             </li>`).join('');
+            let currentTasksNumber = toDoTasks.filter(task => !task.isDone).length;
+            currentTasksListName.textContent = `ToDo [${currentTasksNumber}]`;
         }
 
         function showCompletedTasks() {
-            let currentTasksList = document.getElementById('completedTasks');
-            currentTasksList.innerHTML = '';
-            currentTasksList.innerHTML = toDoTasks.filter(task => task.isDone === true).map(elem => `
+            let completedTasksList = document.getElementById('completedTasks');
+            let completedTasksListName = completedTasksList.previousElementSibling;
+            completedTasksList.innerHTML = '';
+            completedTasksList.innerHTML = toDoTasks.filter(task => task.isDone === true).map(elem => `
             <li class="list-group-item d-flex w-100 mb-2" data-id="${elem.id}">
                 <div class="w-100 mr-2">
                     <div class="d-flex w-100 justify-content-between">
@@ -251,64 +238,66 @@
                     </div>
                 </div>
             </li>`).join('');
+            let completedTasksNumber = toDoTasks.filter(task => task.isDone === true).length;
+            completedTasksListName.textContent = `Completed [${completedTasksNumber}]`;
         }
         
-        function doneTask(num) {
-            let completedItemIndex = toDoTasks.findIndex( (item) => item.id == num);
-            if (toDoTasks[completedItemIndex].isDone == false) {
-                toDoTasks[completedItemIndex].isDone = true;
-            }
+        function doneTask(taskID) {
+            let completedItemIndex = toDoTasks.findIndex( (item) => item.id === taskID);
+            toDoTasks[completedItemIndex].isDone = true;
             showCurrentTask();
             showCompletedTasks();
         }
         
-        
-        
+                
         let toDoTasks = [];
+        let tasksList = document.getElementById("currentTasks");
         
         //создание задачи
         let form = document.querySelector('form');       
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-            addTask();
+            if ( !editAttribute ) {                
+                addTask();                
+            }
+            else {
+                editTask();
+                editAttribute = false;                
+            }
             event.target.reset();
             $('#exampleModal').modal('hide');
             showCurrentTask();            
-        });
+        });      
 
-        let tasksList = document.getElementById("currentTasks");
+        //работа с тасками 
+        let editItemID = '';
+        let editAttribute = false;
 
-        //отметка о выполнении задания       
         tasksList.addEventListener('click', function(event) {
-            if (event.target.className != "btn btn-success w-100")
-                return;
-            else {
+            //отметка о выполнении задания
+            if (event.target.className === "btn btn-success w-100") {
                 let completedItem = event.target.closest('li');
                 let completedID = completedItem.getAttribute('data-id');
                 doneTask(completedID);
+            }               
+            //вывод на форму таски при редактировании задачи
+            if (event.target.className === "btn btn-info w-100 my-2") {
+                editAttribute = true;
+                editItemID = parseInt(event.target.closest('li').getAttribute('data-id'));                
+                let editTask = toDoTasks.find(item => item.id === editItemID);
+                document.getElementById('inputTitle').value = editTask.title;
+                document.getElementById('inputText').value = editTask.text;
+                document.getElementById(editTask.priority).checked = true;
+                $('#exampleModal').modal('show');
             }
-        });  
-        
-        //редактирование задачи
-        tasksList.addEventListener('click', function(event) {
-            if (event.target.className != "btn btn-info w-100 my-2")
-                return;
-            else {
-                let editItemID = event.target.closest('li').getAttribute('data-id');
-                editTask(editItemID);
-            }
-        });
-        
-        //удаление элементов                
-        tasksList.addEventListener('click', function(event) {
-            if (event.target.className != "btn btn-danger w-100")
-                return;
-            else {
+            //удаление элементов
+            if (event.target.className === "btn btn-danger w-100") {
                 let deletedItem = event.target.closest('li');
                 let deletedID = deletedItem.getAttribute('data-id');
                 deleteElement(deletedID);
             }
         });
+
     </script>
 </body>
 </html>
