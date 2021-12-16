@@ -19,9 +19,9 @@
     <div class="container-fluid wrapper">
         <nav class="navbar navbar-light bg-light">
             <h1>MyToDoList</h1>
-            <div class="d-flex">
-                <button type="button" class="btn btn-primary mx-2"><i class="fas fa-sort-numeric-up-alt"></i></button>
-                <button type="button" class="btn btn-primary"><i class="fas fa-sort-numeric-up"></i></button>
+            <div id="sortBar" class="d-flex">
+                <button type="button" id="sortUp" class="btn btn-primary mx-2"><i class="fas fa-sort-numeric-up-alt"></i></button>
+                <button type="button" id="sortDown" class="btn btn-primary"><i class="fas fa-sort-numeric-up"></i></button>
             </div>
             <div class="d-flex">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
@@ -157,9 +157,6 @@
         function createDateTime() {
             let timestamp = new Date().getTime();
             return timestamp;
-            /* let time = new Date().toLocaleTimeString().slice(0,-3);
-            let date = new Date().toLocaleDateString('ru-RU');            
-            return time + " " + date; */
         }
         
         function addTask() {
@@ -249,7 +246,12 @@
             showCompletedTasks();
         }
         
-                
+        /* function sortTask(a, b) {
+            if (a > b) return 1;
+            if (a == b) return 0;
+            if (a < b) return -1;
+        } */
+        
         let toDoTasks = [];
         let tasksList = document.getElementById("currentTasks");
         
@@ -300,6 +302,19 @@
                 let deletedID = deletedItem.getAttribute('data-id');
                 deleteElement(deletedID);
             }
+        });
+        
+        let sortBar = document.getElementById('sortBar');
+        sortBar.addEventListener('click', function(event) {
+            toDoTasks = toDoTasks.filter(task => task.isDone === false);
+            if (event.target.id === "sortUp") {
+                alert(typeof(toDoTasks[0].id));                
+                toDoTasks.sort( (a, b) => a.id - b.id);
+            }
+            if (event.target.id === "sortDown") {
+                toDoTasks.sort( (a, b) => b.id - a.id);
+            }
+            showCurrentTask();
         });
 
     </script>
