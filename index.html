@@ -167,13 +167,13 @@
         }
 
         function deleteElement(taskID) {
-            toDoTasks = toDoTasks.filter(el => el.id !== taskID);
+            toDoTasks = toDoTasks.filter(el => el.id !== +taskID);
             showCurrentTask();
             showCompletedTasks();          
         }
 
         function editTask() {
-            let editItem = toDoTasks.find(el => el.id === editItemID);
+            let editItem = toDoTasks.find(el => el.id === +editItemID);
             editItem.title = inputTitle.value;
             editItem.text = inputText.value;
             editItem.priority = checkPriority();                                    
@@ -240,17 +240,11 @@
         }
         
         function doneTask(taskID) {
-            let completedItemIndex = toDoTasks.findIndex( (item) => item.id === taskID);
+            let completedItemIndex = toDoTasks.findIndex( (item) => item.id === +taskID);
             toDoTasks[completedItemIndex].isDone = true;
             showCurrentTask();
             showCompletedTasks();
         }
-        
-        /* function sortTask(a, b) {
-            if (a > b) return 1;
-            if (a == b) return 0;
-            if (a < b) return -1;
-        } */
         
         let toDoTasks = [];
         let tasksList = document.getElementById("currentTasks");
@@ -306,9 +300,7 @@
         
         let sortBar = document.getElementById('sortBar');
         sortBar.addEventListener('click', function(event) {
-            toDoTasks = toDoTasks.filter(task => task.isDone === false);
-            if (event.target.id === "sortUp") {
-                alert(typeof(toDoTasks[0].id));                
+            if (event.target.id === "sortUp") {              
                 toDoTasks.sort( (a, b) => a.id - b.id);
             }
             if (event.target.id === "sortDown") {
