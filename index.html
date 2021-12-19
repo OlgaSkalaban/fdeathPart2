@@ -39,7 +39,7 @@
             </div>
         </nav>
         <div class="row justify-content-center">
-            <div class="col-10">
+            <div id="tasks-list" class="col-10">
                 <h3 class="my-2">ToDo</h3>
                 <ul class="list-group flex-wrap justify-content-between" id="currentTasks">
                     <li class="list-group-item d-flex w-100 mb-2">
@@ -158,6 +158,10 @@
             let timestamp = new Date().getTime();
             return timestamp;
         }
+
+        function save() {
+            localStorage.setItem('toDoTasks', document.querySelector('#tasks-list').innerHTML);
+        }
         
         function addTask() {
             let task = new Task(inputTitle.value, inputText.value, checkPriority());       
@@ -246,6 +250,12 @@
             showCompletedTasks();
         }
         
+        function initial() {
+            if (localStorage.getItem('toDoTasks')) {
+                document.querySelector('#tasks-list').innerHTML = localStorage.getItem('toDoTasks');
+            }
+        }        
+        
         let toDoTasks = [];
         let tasksList = document.getElementById("currentTasks");
         
@@ -262,6 +272,7 @@
                 exampleModalLabel.textContent = "Add task"; 
                 document.querySelector('button[type="submit"]').textContent = "Add task";             
             }
+            //save();
             event.target.reset();
             $('#exampleModal').modal('hide');
             showCurrentTask();            
@@ -296,6 +307,7 @@
                 let deletedID = deletedItem.getAttribute('data-id');
                 deleteElement(deletedID);
             }
+            //save();
         });
         
         let sortBar = document.getElementById('sortBar');
@@ -309,6 +321,7 @@
             showCurrentTask();
         });
 
+        initial();
     </script>
 </body>
 </html>
