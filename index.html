@@ -160,7 +160,16 @@
         }
 
         function save() {
-            localStorage.setItem('toDoTasks', document.querySelector('#tasks-list').innerHTML);
+            localStorage.setItem('toDoTasks', JSON.stringify(toDoTasks));
+        }
+
+        function init() {
+            if (localStorage.getItem('toDoTasks')) {
+                //alert("Есть данные");
+                toDoTasks = JSON.parse(localStorage.getItem('toDoTasks'));                               
+            }
+            showCurrentTask();
+            showCompletedTasks();
         }
         
         function addTask() {
@@ -250,13 +259,9 @@
             showCompletedTasks();
         }
         
-        function initial() {
-            if (localStorage.getItem('toDoTasks')) {
-                document.querySelector('#tasks-list').innerHTML = localStorage.getItem('toDoTasks');
-            }
-        }        
+        let toDoTasks = [];         
+        init();
         
-        let toDoTasks = [];
         let tasksList = document.getElementById("currentTasks");
         
         //создание задачи
@@ -272,7 +277,8 @@
                 exampleModalLabel.textContent = "Add task"; 
                 document.querySelector('button[type="submit"]').textContent = "Add task";             
             }
-            //save();
+            save();
+            init();
             event.target.reset();
             $('#exampleModal').modal('hide');
             showCurrentTask();            
@@ -288,6 +294,7 @@
                 let completedItem = event.target.closest('li');
                 let completedID = completedItem.getAttribute('data-id');
                 doneTask(completedID);
+                save();
             }               
             //вывод на форму таски при редактировании задачи
             if (event.target.id === "edit") {
@@ -306,8 +313,9 @@
                 let deletedItem = event.target.closest('li');
                 let deletedID = deletedItem.getAttribute('data-id');
                 deleteElement(deletedID);
+                save();
             }
-            //save();
+            init();
         });
         
         let sortBar = document.getElementById('sortBar');
@@ -318,10 +326,11 @@
             if (event.target.id === "sortDown") {
                 toDoTasks.sort( (a, b) => b.id - a.id);
             }
+            save();
+            init();
             showCurrentTask();
         });
 
-        initial();
     </script>
 </body>
 </html>
