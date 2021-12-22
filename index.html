@@ -33,7 +33,9 @@
                         <i class="fas fa-cog"></i>
                     </button>
                     <div class="dropdown-menu p-2 dropdown-menu-right" aria-labelledby="dropdownMenuSettings">
-                        You should add settings here
+                        Theme
+                        <button type="button" class="btn btn-dark w-100 my-2">Dark</button>
+                        <button type="button" class="btn btn-outline-dark w-100" disabled>Light</button>
                     </div>
                 </div>
             </div>
@@ -99,28 +101,53 @@
                         </div>
                         <fieldset class="form-group">
                             <div class="row">
-                                <legend class="col-form-label col-sm-2 pt-0">Priority</legend>
-                                <div class="col-sm-10">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gridRadios" id="Low" value="Low" required>
-                                        <label class="form-check-label" for="Low">
-                                            Low
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="gridRadios" id="Medium" value="Medium">
-                                        <label class="form-check-label" for="Medium">
-                                            Medium
-                                        </label>
-                                    </div>
-                                    <div class="form-check disabled">
-                                        <input class="form-check-input" type="radio" name="gridRadios" id="High" value="High">
-                                        <label class="form-check-label" for="High">
-                                            High
-                                        </label>
+                                <div class="col">
+                                    <legend class="col-form-label col-sm-2 pt-0">Priority</legend>
+                                    <div class="col-sm-10">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gridRadios" id="Low" value="Low" required>
+                                            <label class="form-check-label" for="Low">
+                                                Low
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gridRadios" id="Medium" value="Medium">
+                                            <label class="form-check-label" for="Medium">
+                                                Medium
+                                            </label>
+                                        </div>
+                                        <div class="form-check disabled">
+                                            <input class="form-check-input" type="radio" name="gridRadios" id="High" value="High">
+                                            <label class="form-check-label" for="High">
+                                                High
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="col">
+                                    <legend class="col-form-label col-sm-2 pt-0">Task Color</legend>
+                                    <div class="col-sm-50">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="taskColor" id="Green" value="Green" required>
+                                            <label class="form-check-label" for="Green">
+                                                Green
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="taskColor" id="Purple" value="Purple">
+                                            <label class="form-check-label" for="Purple">
+                                                Purple
+                                            </label>
+                                        </div>
+                                        <div class="form-check disabled">
+                                            <input class="form-check-input" type="radio" name="taskColor" id="Orange" value="Orange">
+                                            <label class="form-check-label" for="Orange">
+                                                Orange
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                                
                         </fieldset>
                         <div class="form-group row">
                             <div class="col-sm-12 text-center">
