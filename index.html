@@ -166,7 +166,7 @@
         function init() {
             if (localStorage.getItem('toDoTasks')) {
                 //alert("Есть данные");
-                toDoTasks = JSON.parse(localStorage.getItem('toDoTasks'));                               
+                toDoTasks = JSON.parse(localStorage.getItem('toDoTasks'));   
             }
             showCurrentTask();
             showCompletedTasks();
@@ -258,6 +258,8 @@
             showCurrentTask();
             showCompletedTasks();
         }
+
+        //////////////main///////////////////
         
         let toDoTasks = [];         
         init();
@@ -278,7 +280,6 @@
                 document.querySelector('button[type="submit"]').textContent = "Add task";             
             }
             save();
-            init();
             event.target.reset();
             $('#exampleModal').modal('hide');
             showCurrentTask();            
@@ -294,7 +295,6 @@
                 let completedItem = event.target.closest('li');
                 let completedID = completedItem.getAttribute('data-id');
                 doneTask(completedID);
-                save();
             }               
             //вывод на форму таски при редактировании задачи
             if (event.target.id === "edit") {
@@ -313,22 +313,24 @@
                 let deletedItem = event.target.closest('li');
                 let deletedID = deletedItem.getAttribute('data-id');
                 deleteElement(deletedID);
-                save();
             }
-            init();
+            save();
         });
         
         let sortBar = document.getElementById('sortBar');
         sortBar.addEventListener('click', function(event) {
+            //по возрастанию
             if (event.target.id === "sortUp") {              
                 toDoTasks.sort( (a, b) => a.id - b.id);
+                showCurrentTask();
             }
+            //по убыванию
             if (event.target.id === "sortDown") {
                 toDoTasks.sort( (a, b) => b.id - a.id);
+                showCurrentTask();
             }
-            save();
-            init();
-            showCurrentTask();
+            save();            
+            showCompletedTasks();
         });
 
     </script>
