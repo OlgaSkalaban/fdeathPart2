@@ -17,7 +17,7 @@
 </head>
 <body>
     <div class="container-fluid wrapper">
-        <nav class="navbar navbar-light bg-light">
+        <nav id="navPanel" class="navbar navbar-light bg-light">
             <h1>MyToDoList</h1>
             <div id="sortBar" class="d-flex">
                 <button type="button" id="sortUp" class="btn btn-primary mx-2"><i class="fas fa-sort-numeric-up-alt"></i></button>
@@ -34,8 +34,8 @@
                     </button>
                     <div class="dropdown-menu p-2 dropdown-menu-right" aria-labelledby="dropdownMenuSettings">
                         Theme
-                        <button type="button" class="btn btn-dark w-100 my-2">Dark</button>
-                        <button type="button" class="btn btn-outline-dark w-100" disabled>Light</button>
+                        <button type="button" id="darkTheme" class="btn btn-dark w-100 my-2">Dark</button>
+                        <button type="button" id="lightTheme" class="btn btn-outline-dark w-100" disabled>Light</button>
                     </div>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                             <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
-                            <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
+                            <div id="dropdownMenu" class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
                                 <button type="button" class="btn btn-success w-100">Complete</button>
                                 <button type="button" class="btn btn-info w-100 my-2">Edit</button>
                                 <button type="button" class="btn btn-danger w-100">Delete</button>
@@ -101,7 +101,7 @@
                         </div>
                         <fieldset class="form-group">
                             <div class="row justify-content-center">
-                                <div class="col-3">
+                                <div class="col-4">
                                     <legend class="col-form-label col-sm-2 pt-0">Priority</legend>
                                     <div class="col-sm-10">
                                         <div class="form-check">
@@ -124,7 +124,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <legend class="col-form-label col-sm-2 pt-0">Color</legend>
                                     <div class="col-sm-10">
                                         <div class="form-check">
@@ -168,13 +168,13 @@
         "use strict";
         //функция-конструктор для создания тасков
         function Task(taskTitle, taskText, taskPriority) {
-            this.id = '',
+            this.id = createDateTime(),
             this.title = taskTitle,
             this.text = taskText,
             this.priority = taskPriority,
             this.isDone = false,
-            this.creationDate = '',
-            this.color = ''
+            this.creationDate = new Date(this.id).toLocaleTimeString().slice(0,-3) + " " + new Date().toLocaleDateString('ru-RU'),
+            this.color = setColor()
         }
         
         function checkPriority() {
@@ -189,21 +189,7 @@
 
         function setColor() {
             let colorBtn = Array.from(document.getElementsByName("taskColor"));
-            let color = colorBtn.find(el => el.checked === true).value;
-            let colorCode = 'black';
-            switch(color) {
-                case 'Green':
-                    return colorCode = "darkgreen";
-                    break;
-                case 'Purple':
-                    return colorCode = "purple";
-                    break;
-                case 'Orange':
-                    return colorCode = "chocolate";
-                    break;
-                default:
-                    return colorCode;
-            }
+            return colorBtn.find(el => el.checked === true).value;
         }
 
         function save() {
@@ -212,7 +198,6 @@
 
         function init() {
             if (localStorage.getItem('toDoTasks')) {
-                //alert("Есть данные");
                 toDoTasks = JSON.parse(localStorage.getItem('toDoTasks'));   
             }
             showCurrentTask();
@@ -221,10 +206,7 @@
         
         function addTask() {
             let task = new Task(inputTitle.value, inputText.value, checkPriority());       
-            toDoTasks.push(task);               
-            task.id = createDateTime();
-            task.color = setColor();
-            task.creationDate = new Date(task.id).toLocaleTimeString().slice(0,-3) + " " + new Date().toLocaleDateString('ru-RU');
+            toDoTasks.push(task);
         }
 
         function deleteElement(taskID) {
@@ -277,16 +259,16 @@
             let completedTasksListName = completedTasksList.previousElementSibling;
             completedTasksList.innerHTML = '';
             completedTasksList.innerHTML = toDoTasks.filter(task => task.isDone === true).map(elem => `
-            <li class="list-group-item d-flex w-100 mb-2" data-id="${elem.id}">
+            <li class="list-group-item d-flex w-100 mb-2" style="background-color:${elem.color}" data-id="${elem.id}">
                 <div class="w-100 mr-2">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1" style="color:dimgrey">${elem.title}</h5>
+                        <h5 class="mb-1">${elem.title}</h5>
                         <div>
                             <small class="mr-2">${elem.priority + ' priority'}</small>
                             <small>${elem.creationDate}</small>
                         </div>
                     </div>
-                    <p class="mb-1 w-100" style="color:dimgrey">${elem.text}</p>
+                    <p class="mb-1 w-100">${elem.text}</p>
                 </div>
                 <div class="dropdown m-2 dropleft">
                     <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -319,12 +301,12 @@
         let form = document.querySelector('form');       
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-            if ( !editAttribute ) {                
+            if ( !isEdit ) {                
                 addTask();                
             }
             else {
                 editTask();
-                editAttribute = false;
+                isEdit = false;
                 exampleModalLabel.textContent = "Add task"; 
                 document.querySelector('button[type="submit"]').textContent = "Add task";             
             }
@@ -336,7 +318,7 @@
 
         //работа с тасками 
         let editItemID = '';
-        let editAttribute = false;
+        let isEdit = false;
 
         tasksList.addEventListener('click', function(event) {
             //отметка о выполнении задания
@@ -347,14 +329,14 @@
             }               
             //вывод на форму таски при редактировании задачи
             if (event.target.id === "edit") {
-                editAttribute = true;
+                isEdit = true;
                 editItemID = parseInt(event.target.closest('li').getAttribute('data-id'));                
                 let editTask = toDoTasks.find(item => item.id === editItemID);
                 inputTitle.value = editTask.title;
                 inputText.value = editTask.text;
                 document.getElementById(editTask.priority).checked = true;
                 //получить свойство из html
-                //document.getElementById(editTask.color).checked = true;
+                document.getElementById(editTask.color).checked = true;
                 exampleModalLabel.textContent = "Edit task";
                 document.querySelector('button[type="submit"]').textContent = "Edit task";
                 $('#exampleModal').modal('show');
@@ -382,6 +364,31 @@
             }
             save();            
             showCompletedTasks();
+        });
+
+        //изменение темы приложения
+        let darkThemeBtn = document.getElementById('darkTheme');
+        let lightThemeBtn = document.getElementById('lightTheme');
+        darkThemeBtn.addEventListener('click', function(event) {
+            darkThemeBtn.setAttribute('disabled', 'true');
+            lightThemeBtn.disabled = false;
+            // изменение стилей
+            document.body.style.color = 'white';
+            document.body.style.backgroundColor = 'black';
+            let nav = document.getElementById('navPanel');
+            navPanel.setAttribute('style', 'background-color: black !important');
+            save();
+        });
+
+        lightThemeBtn.addEventListener('click', function(event) {
+            darkThemeBtn.disabled = false;
+            lightThemeBtn.disabled = true;
+            // изменение стилей
+            document.body.style.color = 'black';
+            document.body.style.backgroundColor = 'white';
+            let nav = document.getElementById('navPanel');
+            navPanel.style.setProperty("background-color", "#f8f9fa", "important");
+            save();
         });
 
     </script>
