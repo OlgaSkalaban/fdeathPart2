@@ -196,12 +196,23 @@
             localStorage.setItem('toDoTasks', JSON.stringify(toDoTasks));
         }
 
+        function saveTheme(theme){
+            localStorage.setItem('theme', theme);
+        }
+
         function init() {
+            if (localStorage.getItem("theme")) {
+                theme = localStorage.getItem("theme");
+                applyTheme(theme);
+            }
+            else {
+                applyTheme('light');
+            }
             if (localStorage.getItem('toDoTasks')) {
                 toDoTasks = JSON.parse(localStorage.getItem('toDoTasks'));   
             }
-            showCurrentTask();
-            showCompletedTasks();
+            showTask('current');
+            showTask('completed');
         }
         
         function addTask() {
@@ -211,8 +222,8 @@
 
         function deleteElement(taskID) {
             toDoTasks = toDoTasks.filter(el => el.id !== +taskID);
-            showCurrentTask();
-            showCompletedTasks();          
+            showTask('current');
+            showTask('completed');          
         }
 
         function editTask() {
@@ -223,79 +234,95 @@
             editItem.color = setColor();                                   
         }
 
-        function showCurrentTask() {
-            let currentTasksList = document.getElementById('currentTasks');
-            let currentTasksListName = currentTasksList.previousElementSibling;
-            currentTasksList.innerHTML = '';
-            currentTasksList.innerHTML = toDoTasks.filter(task => task.isDone === false).map(elem => `
-            <li class="list-group-item d-flex w-100 mb-2" style="background-color:${elem.color}" data-id="${elem.id}">
-                <div class="w-100 mr-2">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">${elem.title}</h5>
-                        <div>
-                            <small class="mr-2">${elem.priority + ' priority'}</small>
-                            <small>${elem.creationDate}</small>
+        function showTask(status) {
+            if (status === 'current') {
+                let tasksList = document.getElementById('currentTasks');
+                let tasksListName = tasksList.previousElementSibling;
+                tasksList.innerHTML = '';
+                tasksList.innerHTML = toDoTasks.filter(task => task.isDone === false).map(elem => `
+                <li class="list-group-item d-flex w-100 mb-2" style="background-color:${elem.color}" data-id="${elem.id}">
+                    <div class="w-100 mr-2">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">${elem.title}</h5>
+                            <div>
+                                <small class="mr-2">${elem.priority + ' priority'}</small>
+                                <small>${elem.creationDate}</small>
+                            </div>
+                        </div>
+                        <p class="mb-1 w-100">${elem.text}</p>
+                    </div>
+                    <div class="dropdown m-2 dropleft">
+                        <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
+                            <button type="button" id="complete" class="btn btn-success w-100">Complete</button>
+                            <button type="button" id="edit" class="btn btn-info w-100 my-2">Edit</button>
+                            <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
                         </div>
                     </div>
-                    <p class="mb-1 w-100">${elem.text}</p>
-                </div>
-                <div class="dropdown m-2 dropleft">
-                    <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
-                        <button type="button" id="complete" class="btn btn-success w-100">Complete</button>
-                        <button type="button" id="edit" class="btn btn-info w-100 my-2">Edit</button>
-                        <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
+                </li>`).join('');
+                let tasksNumber = toDoTasks.filter(task => !task.isDone).length;
+                tasksListName.textContent = `ToDo [${tasksNumber}]`;
+            }
+            else {
+                let tasksList = document.getElementById('completedTasks');
+                let tasksListName = tasksList.previousElementSibling;
+                tasksList.innerHTML = '';
+                tasksList.innerHTML = toDoTasks.filter(task => task.isDone === true).map(elem => `
+                <li class="list-group-item d-flex w-100 mb-2" style="background-color:${elem.color}" data-id="${elem.id}">
+                    <div class="w-100 mr-2">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">${elem.title}</h5>
+                            <div>
+                                <small class="mr-2">${elem.priority + ' priority'}</small>
+                                <small>${elem.creationDate}</small>
+                            </div>
+                        </div>
+                        <p class="mb-1 w-100">${elem.text}</p>
                     </div>
-                </div>
-            </li>`).join('');
-            let currentTasksNumber = toDoTasks.filter(task => !task.isDone).length;
-            currentTasksListName.textContent = `ToDo [${currentTasksNumber}]`;
+                    <div class="dropdown m-2 dropleft">
+                        <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
+                            <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
+                        </div>
+                    </div>
+                </li>`).join('');
+                let tasksNumber = toDoTasks.filter(task => task.isDone).length;
+                tasksListName.textContent = `Completed [${tasksNumber}]`;
+            }
         }
 
-        function showCompletedTasks() {
-            let completedTasksList = document.getElementById('completedTasks');
-            let completedTasksListName = completedTasksList.previousElementSibling;
-            completedTasksList.innerHTML = '';
-            completedTasksList.innerHTML = toDoTasks.filter(task => task.isDone === true).map(elem => `
-            <li class="list-group-item d-flex w-100 mb-2" style="background-color:${elem.color}" data-id="${elem.id}">
-                <div class="w-100 mr-2">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">${elem.title}</h5>
-                        <div>
-                            <small class="mr-2">${elem.priority + ' priority'}</small>
-                            <small>${elem.creationDate}</small>
-                        </div>
-                    </div>
-                    <p class="mb-1 w-100">${elem.text}</p>
-                </div>
-                <div class="dropdown m-2 dropleft">
-                    <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
-                        <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
-                    </div>
-                </div>
-            </li>`).join('');
-            let completedTasksNumber = toDoTasks.filter(task => task.isDone === true).length;
-            completedTasksListName.textContent = `Completed [${completedTasksNumber}]`;
-        }
-        
         function doneTask(taskID) {
             let completedItemIndex = toDoTasks.findIndex( (item) => item.id === +taskID);
             toDoTasks[completedItemIndex].isDone = true;
-            showCurrentTask();
-            showCompletedTasks();
+            showTask('current');
+            showTask('completed');
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.style.color = 'white';
+                document.body.style.backgroundColor = 'black';
+            }
+            else {
+                document.body.style.color = 'black';
+                document.body.style.backgroundColor = 'white';
+            }           
         }
 
         //////////////main///////////////////
         
-        let toDoTasks = [];         
+        let toDoTasks = [];
+        let theme = '';
+        let darkThemeBtn = document.getElementById('darkTheme');
+        let lightThemeBtn = document.getElementById('lightTheme');
+
         init();
         
-        let tasksList = document.getElementById("currentTasks");
+        let tasksList = document.getElementById("tasks-list");
         
         //создание задачи
         let form = document.querySelector('form');       
@@ -313,7 +340,7 @@
             save();
             event.target.reset();
             $('#exampleModal').modal('hide');
-            showCurrentTask();            
+            showTask('current');            
         });      
 
         //работа с тасками 
@@ -355,40 +382,36 @@
             //по возрастанию
             if (event.target.id === "sortUp") {              
                 toDoTasks.sort( (a, b) => a.id - b.id);
-                showCurrentTask();
+                showTask('current');
             }
             //по убыванию
             if (event.target.id === "sortDown") {
                 toDoTasks.sort( (a, b) => b.id - a.id);
-                showCurrentTask();
+                showTask('current');
             }
             save();            
-            showCompletedTasks();
+            showTasks('completed');
         });
 
         //изменение темы приложения
-        let darkThemeBtn = document.getElementById('darkTheme');
-        let lightThemeBtn = document.getElementById('lightTheme');
-        darkThemeBtn.addEventListener('click', function(event) {
-            darkThemeBtn.setAttribute('disabled', 'true');
-            lightThemeBtn.disabled = false;
+        darkThemeBtn.addEventListener('click', function(event) {            
+            theme = 'dark';
+            darkThemeBtn.toggleAttribute('disabled');
+            lightThemeBtn.toggleAttribute('disabled');
             // изменение стилей
-            document.body.style.color = 'white';
-            document.body.style.backgroundColor = 'black';
-            let nav = document.getElementById('navPanel');
-            navPanel.setAttribute('style', 'background-color: black !important');
-            save();
+            applyTheme(theme);
+            document.getElementById('navPanel').classList.toggle('bg-light');
+            saveTheme(theme);            
         });
 
-        lightThemeBtn.addEventListener('click', function(event) {
-            darkThemeBtn.disabled = false;
-            lightThemeBtn.disabled = true;
+        lightThemeBtn.addEventListener('click', function(event) {            
+            theme = 'light';
+            lightThemeBtn.toggleAttribute('disabled');
+            darkThemeBtn.toggleAttribute('disabled');
             // изменение стилей
-            document.body.style.color = 'black';
-            document.body.style.backgroundColor = 'white';
-            let nav = document.getElementById('navPanel');
-            navPanel.style.setProperty("background-color", "#f8f9fa", "important");
-            save();
+            applyTheme(theme);
+            document.getElementById('navPanel').classList.toggle('bg-light');
+            saveTheme(theme);
         });
 
     </script>
