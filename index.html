@@ -35,7 +35,7 @@
                     <div class="dropdown-menu p-2 dropdown-menu-right" aria-labelledby="dropdownMenuSettings">
                         Theme
                         <button type="button" id="darkTheme" class="btn btn-dark w-100 my-2">Dark</button>
-                        <button type="button" id="lightTheme" class="btn btn-outline-dark w-100" disabled>Light</button>
+                        <button type="button" id="lightTheme" class="btn btn-outline-dark w-100">Light</button>
                     </div>
                 </div>
             </div>
@@ -204,6 +204,7 @@
             if (localStorage.getItem("theme")) {
                 theme = localStorage.getItem("theme");
                 applyTheme(theme);
+                document.getElementById('navPanel').classList.remove('bg-light');                
             }
             else {
                 applyTheme('light');
@@ -344,7 +345,7 @@
         });      
 
         exampleModal.addEventListener('click', function(event) {
-            if (event.target !==  document.querySelector('button[type="submit"]')) {
+            if (event.target === document.querySelector('button[type="button"]')) {
                 form.reset();
             }
         });
@@ -396,14 +397,12 @@
                 showTask('current');
             }
             save();            
-            showTasks('completed');
+            showTask('completed');
         });
 
         //изменение темы приложения
         darkThemeBtn.addEventListener('click', function(event) {            
-            theme = 'dark';
-            darkThemeBtn.toggleAttribute('disabled');
-            lightThemeBtn.toggleAttribute('disabled');
+            theme = 'dark';            
             // изменение стилей
             applyTheme(theme);
             document.getElementById('navPanel').classList.toggle('bg-light');
@@ -412,8 +411,6 @@
 
         lightThemeBtn.addEventListener('click', function(event) {            
             theme = 'light';
-            lightThemeBtn.toggleAttribute('disabled');
-            darkThemeBtn.toggleAttribute('disabled');
             // изменение стилей
             applyTheme(theme);
             document.getElementById('navPanel').classList.toggle('bg-light');
