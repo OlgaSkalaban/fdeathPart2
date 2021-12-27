@@ -317,15 +317,18 @@
                     <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
-                    <div id="dropdownMenu" class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
+                    `<div id="dropdownMenu" class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
+                        ${ status === 'current' ? `
                         <button type="button" id="complete" class="btn btn-success w-100">Complete</button>
-                        <button type="button" id="edit" class="btn btn-info w-100 my-2">Edit</button>
+                        <button type="button" id="edit" class="btn btn-info w-100 my-2">Edit</button>`
+                        : ''}
                         <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
-                    </div>
+                    </div>`
                 </div>
             </li>`).join('');
             
-            let tasksNumber = (status === 'current') ? toDoTasks.filter(task => !task.isDone).length : toDoTasks.filter(task => task.isDone).length;
+            let tasksNumber = toDoTasks.filter(task => task.isDone === isDoneValue).length;
+            //переделать ToDo
             tasksListName.textContent = `ToDo [${tasksNumber}]`;
         }
         
