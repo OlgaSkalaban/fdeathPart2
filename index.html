@@ -234,67 +234,6 @@
             editItem.color = setColor();                                   
         }
 
-        /* function showTask(status) {
-            if (status === 'current') {
-                let tasksList = document.getElementById('currentTasks');
-                let tasksListName = tasksList.previousElementSibling;
-                tasksList.innerHTML = '';
-                tasksList.innerHTML = toDoTasks.filter(task => task.isDone === false).map(elem => `
-                <li class="list-group-item d-flex w-100 mb-2" style="background-color:${elem.color}" data-id="${elem.id}">
-                    <div class="w-100 mr-2">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">${elem.title}</h5>
-                            <div>
-                                <small class="mr-2">${elem.priority + ' priority'}</small>
-                                <small>${elem.creationDate}</small>
-                            </div>
-                        </div>
-                        <p class="mb-1 w-100">${elem.text}</p>
-                    </div>
-                    <div class="dropdown m-2 dropleft">
-                        <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
-                            <button type="button" id="complete" class="btn btn-success w-100">Complete</button>
-                            <button type="button" id="edit" class="btn btn-info w-100 my-2">Edit</button>
-                            <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
-                        </div>
-                    </div>
-                </li>`).join('');
-                let tasksNumber = toDoTasks.filter(task => !task.isDone).length;
-                tasksListName.textContent = `ToDo [${tasksNumber}]`;
-            }
-            else {
-                let tasksList = document.getElementById('completedTasks');
-                let tasksListName = tasksList.previousElementSibling;
-                tasksList.innerHTML = '';
-                tasksList.innerHTML = toDoTasks.filter(task => task.isDone === true).map(elem => `
-                <li class="list-group-item d-flex w-100 mb-2" style="background-color:${elem.color}" data-id="${elem.id}">
-                    <div class="w-100 mr-2">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">${elem.title}</h5>
-                            <div>
-                                <small class="mr-2">${elem.priority + ' priority'}</small>
-                                <small>${elem.creationDate}</small>
-                            </div>
-                        </div>
-                        <p class="mb-1 w-100">${elem.text}</p>
-                    </div>
-                    <div class="dropdown m-2 dropleft">
-                        <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
-                            <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
-                        </div>
-                    </div>
-                </li>`).join('');
-                let tasksNumber = toDoTasks.filter(task => task.isDone).length;
-                tasksListName.textContent = `Completed [${tasksNumber}]`;
-            }
-        } */
-
         function showTask(status) {
             let tasksList = document.getElementById(`${status+'Tasks'}`);
             let tasksListName = tasksList.previousElementSibling;
@@ -317,19 +256,19 @@
                     <button class="btn btn-secondary h-100" type="button" id="dropdownMenuItem1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
-                    `<div id="dropdownMenu" class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
-                        ${ status === 'current' ? `
+                    <div id="dropdownMenu" class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
+                        ${status === 'current' ? `
                         <button type="button" id="complete" class="btn btn-success w-100">Complete</button>
                         <button type="button" id="edit" class="btn btn-info w-100 my-2">Edit</button>`
                         : ''}
                         <button type="button" id="delete" class="btn btn-danger w-100">Delete</button>
-                    </div>`
+                    </div>
                 </div>
             </li>`).join('');
             
             let tasksNumber = toDoTasks.filter(task => task.isDone === isDoneValue).length;
             //переделать ToDo
-            tasksListName.textContent = `ToDo [${tasksNumber}]`;
+            tasksListName.textContent = (status === 'current') ? `ToDo [${tasksNumber}]` : `Completed [${tasksNumber}]`;
         }
         
         function doneTask(taskID) {
@@ -362,6 +301,7 @@
         init();
         
         let tasksList = document.getElementById("tasks-list");
+        let exampleModal = document.getElementById("exampleModal");
         
         //создание задачи
         let form = document.querySelector('form');       
@@ -380,12 +320,12 @@
             event.target.reset();
             $('#exampleModal').modal('hide');
             showTask('current');            
-        });      
-
+        });
+        
         exampleModal.addEventListener('click', function(event) {
-            if (event.target === document.querySelector('button[type="button"]')) {
+            if ((event.target.dataset.dismiss === 'modal') || (event.target.closest('button').dataset.dismiss === 'modal')) {
                 form.reset();
-            }
+            } 
         });
         
         //работа с тасками 
@@ -407,7 +347,6 @@
                 inputTitle.value = editTask.title;
                 inputText.value = editTask.text;
                 document.getElementById(editTask.priority).checked = true;
-                //получить свойство из html
                 document.getElementById(editTask.color).checked = true;
                 exampleModalLabel.textContent = "Edit task";
                 document.querySelector('button[type="submit"]').textContent = "Edit task";
