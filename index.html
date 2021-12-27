@@ -343,6 +343,12 @@
             showTask('current');            
         });      
 
+        exampleModal.addEventListener('click', function(event) {
+            if (event.target !==  document.querySelector('button[type="submit"]')) {
+                form.reset();
+            }
+        });
+        
         //работа с тасками 
         let editItemID = '';
         let isEdit = false;
